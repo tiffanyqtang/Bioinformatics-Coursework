@@ -1,0 +1,331 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "70004962-e9de-479e-be95-b7fda32128c5",
+   "metadata": {},
+   "source": [
+    "In the lecture we analysed the warp breaks data for looms\n",
+    "(warpbreaks dataset in R)\n",
+    "It has data on breaks/loom/fixed-yarn-length for different looms,\n",
+    "maybe from a knitting factory. \n",
+    "\n",
+    "We have already analyzed the data using the Poisson as a link function. \n",
+    "\n",
+    "The assignment is to reanalyze the data using the quasipoisson link\n",
+    "function \n",
+    "How is it different from the results of the Poisson distribution ?\n",
+    "Is it any better ? why ?\n",
+    "\n",
+    "If possible, try to  use jtools and plot_summs to plot model variables. \n",
+    "\n",
+    " \n",
+    "\n",
+    "The point of this exercise is to highlight how quasipoisson link function\n",
+    "might be a better alternative to Poisson. Please annotate the logic\n",
+    "of the code in comments (so the code should run by itself and\n",
+    "generate the plots, but also be easy to read and understand the logic).\n",
+    "The goal here is to give you some familiarity with implementing GLM models\n",
+    "for future use in your work. This might be easier to do in a notebook \n",
+    "\n",
+    " \n",
+    "some code from our lectures are also available here. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "eae5c476-d6a4-4f6a-ad3d-0f253ff12ce2",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"dataframe\">\n",
+       "<caption>A data.frame: 6 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th></th><th scope=col>breaks</th><th scope=col>wool</th><th scope=col>tension</th></tr>\n",
+       "\t<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><th scope=row>1</th><td>26</td><td>A</td><td>L</td></tr>\n",
+       "\t<tr><th scope=row>2</th><td>30</td><td>A</td><td>L</td></tr>\n",
+       "\t<tr><th scope=row>3</th><td>54</td><td>A</td><td>L</td></tr>\n",
+       "\t<tr><th scope=row>4</th><td>25</td><td>A</td><td>L</td></tr>\n",
+       "\t<tr><th scope=row>5</th><td>70</td><td>A</td><td>L</td></tr>\n",
+       "\t<tr><th scope=row>6</th><td>52</td><td>A</td><td>L</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 6 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       "  & breaks & wool & tension\\\\\n",
+       "  & <dbl> & <fct> & <fct>\\\\\n",
+       "\\hline\n",
+       "\t1 & 26 & A & L\\\\\n",
+       "\t2 & 30 & A & L\\\\\n",
+       "\t3 & 54 & A & L\\\\\n",
+       "\t4 & 25 & A & L\\\\\n",
+       "\t5 & 70 & A & L\\\\\n",
+       "\t6 & 52 & A & L\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 6 × 3\n",
+       "\n",
+       "| <!--/--> | breaks &lt;dbl&gt; | wool &lt;fct&gt; | tension &lt;fct&gt; |\n",
+       "|---|---|---|---|\n",
+       "| 1 | 26 | A | L |\n",
+       "| 2 | 30 | A | L |\n",
+       "| 3 | 54 | A | L |\n",
+       "| 4 | 25 | A | L |\n",
+       "| 5 | 70 | A | L |\n",
+       "| 6 | 52 | A | L |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  breaks wool tension\n",
+       "1 26     A    L      \n",
+       "2 30     A    L      \n",
+       "3 54     A    L      \n",
+       "4 25     A    L      \n",
+       "5 70     A    L      \n",
+       "6 52     A    L      "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "28.1481481481481"
+      ],
+      "text/latex": [
+       "28.1481481481481"
+      ],
+      "text/markdown": [
+       "28.1481481481481"
+      ],
+      "text/plain": [
+       "[1] 28.14815"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "174.204053109713"
+      ],
+      "text/latex": [
+       "174.204053109713"
+      ],
+      "text/markdown": [
+       "174.204053109713"
+      ],
+      "text/plain": [
+       "[1] 174.2041"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#this is the code from the notes\n",
+    "# Just putting this here for visualization\n",
+    "data <- warpbreaks\n",
+    "head(data)\n",
+    "mean(data$breaks)\n",
+    "var(data$breaks)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "64d14ba2-6659-4cf7-ab8e-cbbadfc672a5",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\n",
+       "Call:\n",
+       "glm(formula = breaks ~ wool + tension, family = poisson(link = \"log\"), \n",
+       "    data = data)\n",
+       "\n",
+       "Coefficients:\n",
+       "            Estimate Std. Error z value Pr(>|z|)    \n",
+       "(Intercept)  3.69196    0.04541  81.302  < 2e-16 ***\n",
+       "woolB       -0.20599    0.05157  -3.994 6.49e-05 ***\n",
+       "tensionM    -0.32132    0.06027  -5.332 9.73e-08 ***\n",
+       "tensionH    -0.51849    0.06396  -8.107 5.21e-16 ***\n",
+       "---\n",
+       "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n",
+       "\n",
+       "(Dispersion parameter for poisson family taken to be 1)\n",
+       "\n",
+       "    Null deviance: 297.37  on 53  degrees of freedom\n",
+       "Residual deviance: 210.39  on 50  degrees of freedom\n",
+       "AIC: 493.06\n",
+       "\n",
+       "Number of Fisher Scoring iterations: 4\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# Poisson Analysis from the notes\n",
+    "poisson.model <- glm(breaks~wool + tension, data, family = poisson(link = \"log\"))\n",
+    "summary(poisson.model)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "fc1cd7a7-7ac2-4b41-80f3-6cc0fd6fa5bc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# install packages\n",
+    "library(jtools)   \n",
+    "library(ggplot2)  \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "2701a942-3e61-448b-89c2-1e0e5cb92cab",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\n",
+       "Call:\n",
+       "glm(formula = breaks ~ wool + tension, family = quasipoisson(link = \"log\"), \n",
+       "    data = data)\n",
+       "\n",
+       "Coefficients:\n",
+       "            Estimate Std. Error t value Pr(>|t|)    \n",
+       "(Intercept)  3.69196    0.09374  39.384  < 2e-16 ***\n",
+       "woolB       -0.20599    0.10646  -1.935 0.058673 .  \n",
+       "tensionM    -0.32132    0.12441  -2.583 0.012775 *  \n",
+       "tensionH    -0.51849    0.13203  -3.927 0.000264 ***\n",
+       "---\n",
+       "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n",
+       "\n",
+       "(Dispersion parameter for quasipoisson family taken to be 4.261537)\n",
+       "\n",
+       "    Null deviance: 297.37  on 53  degrees of freedom\n",
+       "Residual deviance: 210.39  on 50  degrees of freedom\n",
+       "AIC: NA\n",
+       "\n",
+       "Number of Fisher Scoring iterations: 4\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# Fit Quasipoisson model\n",
+    "# use the glm like in the notes\n",
+    "quasi.model <- glm(breaks ~ wool + tension, data = data, family = quasipoisson(link = \"log\"))\n",
+    "summary(quasi.model)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "efc8cd56-3b90-4192-965f-7ad5ecebc059",
+   "metadata": {},
+   "source": [
+    "Off the bat by looking at the summary of the two we can see inthe Poisson model all predictors are highly significant, with tensionM and tensionH being very strongly significant. In the quasipoisson model we see the woolB is only not significant (p valule is 0.058, which is greater than 0.05). \n",
+    "\n",
+    "The dispersion parameters are also different, with the poisson model being 1 (mean and variance are equal) and the quasipoisson model being 4.2615- which indicates over disperson."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "4b0333f7-4240-40bf-94be-b4d57b221cd3",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "\u001b[36mNote: Pseudo-R2 for quasibinomial/quasipoisson families is calculated by\n",
+      "refitting the fitted and null models as binomial/poisson.\u001b[39m\n"
+     ]
+    },
+    {
+     "data": {
+      "image/png": "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\nSUVORK5CYII=",
+      "text/plain": [
+       "plot without title"
+      ]
+     },
+     "metadata": {
+      "image/png": {
+       "height": 420,
+       "width": 420
+      }
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# Useplot_summs to visualize the coefficients of both models\n",
+    "# both models on the same graph\n",
+    "plot_summs(poisson.model, quasi.model, \n",
+    "           scale = TRUE, plot.distributions = FALSE, \n",
+    "           coefs = NULL, # Optionally specify coefficients to include\n",
+    "           model.names = c(\"Poisson Model\", \"Quasipoisson Model\"),\n",
+    "           title = \"Comparison of Poisson and Quasipoisson Model Coefficients\")\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f6f963bc-f88a-4ba0-917f-b3bebb14a5ce",
+   "metadata": {},
+   "source": [
+    "We can see too in the plots that the dispersion is greater for the quasipoisson plot. \n",
+    "\n",
+    "\n",
+    "Since the dispersion is 4.2615 (variance is greater than mean, and we can see that in the first cell we ran), the quasipoisson model is a better choice since the data exhibits over disperson"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b06e3cc1-e9f3-491e-8024-7e5a1f2854f3",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "R",
+   "language": "R",
+   "name": "ir"
+  },
+  "language_info": {
+   "codemirror_mode": "r",
+   "file_extension": ".r",
+   "mimetype": "text/x-r-source",
+   "name": "R",
+   "pygments_lexer": "r",
+   "version": "4.4.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
