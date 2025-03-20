@@ -1,0 +1,1441 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "07d0f8b6-eb0c-4c62-b29f-a12b1d86b009",
+   "metadata": {},
+   "source": [
+    "## Assignment 5\n",
+    "### Tiffany Tang\n",
+    "### NetID: tt2405\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "c3705342-1605-4cec-9f2f-6d4d679954f5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Read in the wh data\n",
+    "wh <- read.csv(\"weight-height.csv\", header = TRUE)\n",
+    "\n",
+    "#Pick 20 random males and 20 random females\n",
+    "male_sample <- wh[1:5000, ][sample(1:5000, 20), ]\n",
+    "female_sample <- wh[5001:10000, ][sample(1:5000, 20), ]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "ed898066-b950-4156-81b9-46945cb919d2",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  male_sample$Height and female_sample$Height\n",
+      "t = 5.7917, df = 37.994, p-value = 1.1e-06\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " 3.370560 6.992997\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 68.82065  63.63887 \n",
+      "\n",
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  male_sample$Weight and female_sample$Weight\n",
+      "t = 9.9156, df = 37.917, p-value = 4.423e-12\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " 40.65539 61.51658\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 187.2066  136.1206 \n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# for height\n",
+    "ttest_height <- t.test(male_sample$Height, female_sample$Height)\n",
+    "\n",
+    "#for weight\n",
+    "ttest_weight <- t.test(male_sample$Weight, female_sample$Weight)\n",
+    "\n",
+    "#print results\n",
+    "print(ttest_height)\n",
+    "print(ttest_weight)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ae09b988-c88b-497c-890e-c3a2a171a928",
+   "metadata": {},
+   "source": [
+    "For both the heights and weights, the samples appear to be statistically significant to each other, as both p-values for height and weight are less than 0.05"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "0b4159fb-9d61-42db-9d78-a97adc4e7380",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[1] \"true\"\n",
+      "[1] \"Added: 0.1 P-value: 1.56556333895484e-06\"\n",
+      "[1] \"Added: 0.2 P-value: 2.22791242519126e-06\"\n",
+      "[1] \"Added: 0.3 P-value: 3.16941812627363e-06\"\n",
+      "[1] \"Added: 0.4 P-value: 4.50666713438602e-06\"\n",
+      "[1] \"Added: 0.5 P-value: 6.40418121837333e-06\"\n",
+      "[1] \"Added: 0.6 P-value: 9.0936580596968e-06\"\n",
+      "[1] \"Added: 0.7 P-value: 1.29006670174768e-05\"\n",
+      "[1] \"Added: 0.8 P-value: 1.82815424905393e-05\"\n",
+      "[1] \"Added: 0.9 P-value: 2.58741506491826e-05\"\n",
+      "[1] \"Added: 1 P-value: 3.65674176951959e-05\"\n",
+      "[1] \"Added: 1.1 P-value: 5.15960643127219e-05\"\n",
+      "[1] \"Added: 1.2 P-value: 7.26689621778118e-05\"\n",
+      "[1] \"Added: 1.3 P-value: 0.000102141985849072\"\n",
+      "[1] \"Added: 1.4 P-value: 0.000143249241268516\"\n",
+      "[1] \"Added: 1.5 P-value: 0.000200410154202669\"\n",
+      "[1] \"Added: 1.6 P-value: 0.000279634102212617\"\n",
+      "[1] \"Added: 1.7 P-value: 0.000389049009500765\"\n",
+      "[1] \"Added: 1.8 P-value: 0.000539585430658551\"\n",
+      "[1] \"Added: 1.9 P-value: 0.000745852816607118\"\n",
+      "[1] \"Added: 2 P-value: 0.0010272493770004\"\n",
+      "[1] \"Added: 2.1 P-value: 0.0014093504707783\"\n",
+      "[1] \"Added: 2.2 P-value: 0.00192562171328606\"\n",
+      "[1] \"Added: 2.3 P-value: 0.00261950059408474\"\n",
+      "[1] \"Added: 2.4 P-value: 0.00354688263023356\"\n",
+      "[1] \"Added: 2.5 P-value: 0.00477903293154583\"\n",
+      "[1] \"Added: 2.6 P-value: 0.00640591937650023\"\n",
+      "[1] \"Added: 2.7 P-value: 0.0085399273300514\"\n",
+      "[1] \"Added: 2.8 P-value: 0.0113198663688029\"\n",
+      "[1] \"Added: 2.9 P-value: 0.0149151161471753\"\n",
+      "[1] \"Added: 3 P-value: 0.0195296822138763\"\n",
+      "[1] \"Added: 3.1 P-value: 0.0254058463432223\"\n",
+      "[1] \"Added: 3.2 P-value: 0.0328270056689534\"\n",
+      "[1] \"Added: 3.3 P-value: 0.0421192097386586\"\n",
+      "[1] \"Added: 3.4 P-value: 0.0536508370066707\"\n"
+     ]
+    }
+   ],
+   "source": [
+    "# add 0.1 to each female height, \n",
+    "# I will be doing this in a for loop\n",
+    "\n",
+    "increment <- 0.1\n",
+    "curr_p_value = 1.563e-07 #from the above t test\n",
+    "added_value <- 0 #this is our counter\n",
+    "\n",
+    "if (curr_p_value < 0.05)\n",
+    "    print(\"true\")\n",
+    "#while the curr_p_value is < 0.05\n",
+    "while(curr_p_value < 0.05) {\n",
+    "    female_sample$Height = female_sample$Height + increment #new height with be +.1\n",
+    "    added_value = added_value + increment #add to our counter\n",
+    "\n",
+    "    #perform t test for new height\n",
+    "    ttest_height <- t.test(male_sample$Height, female_sample$Height)\n",
+    "    curr_p_value <- ttest_height$p.value #adjust the current pvalue\n",
+    "\n",
+    "    print(paste(\"Added:\", added_value, \"P-value:\", curr_p_value))\n",
+    "    }"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7bc0a0b9-8941-400b-987f-e2d90de6d068",
+   "metadata": {},
+   "source": [
+    "In our one case from above, the heighest we can add is 3.3 without losing significance. Adding 3.4 causes the p value to exceed 0.05 as seen above"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f582cb43-45c4-4347-81c3-06dc46fb4d04",
+   "metadata": {},
+   "source": [
+    "**If you chose the heights of every female to be equal to the\n",
+    "mean, could you have added more before the test showed lack of significant difference ?**\n",
+    "\n",
+    "Yes, if all the heights of every female equaled the mean height of the original female sample, we could add more to the female heights before the t test showed a lack of significant difference. This reduces the pooled standard deviation in the t test, making it easier to achieve a significant difference in means, even with a larger additive change to the female heights. Less variability leads to increased sensitivity in detecting differences between groups. You can add more to the female heights before the p-value exceeds 0.05 as compared to when heights retain their original variability. \n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b73ba7dc-0e04-47ec-bd92-9ee5bf44ddf4",
+   "metadata": {},
+   "source": [
+    "**How is the answer to question 2 related to the difference in\n",
+    "means between the two groups and the standard deviations of each group ?**\n",
+    "\n",
+    "As you increase the heights in the females, the mean of the female group rises. This decreases the gap between the male height mean and the female height mean. Eventually the gap becomes small enough and the t test may no longer find a significantly difference leading to a p value exceeding 0.05. A smaller standard deviation in either group also leads to a smaller denominator in the t statistic formula, leading to a larger t value for the same difference in means. Therefore, being able to add a greater value to female heights is facilitated by having a sufficient difference in means and manageable standard deviations that enhance the statistical power of the test."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "id": "76406e88-50c3-45ec-8de6-dc9519b75662",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"dataframe\">\n",
+       "<caption>A data.frame: 6 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th></th><th scope=col>Gender</th><th scope=col>Height</th><th scope=col>Weight</th></tr>\n",
+       "\t<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><th scope=row>4303</th><td>Male</td><td>76.69096</td><td>233.1587</td></tr>\n",
+       "\t<tr><th scope=row>191</th><td>Male</td><td>76.70983</td><td>235.0354</td></tr>\n",
+       "\t<tr><th scope=row>3817</th><td>Male</td><td>76.71998</td><td>236.1467</td></tr>\n",
+       "\t<tr><th scope=row>4702</th><td>Male</td><td>76.73245</td><td>241.6866</td></tr>\n",
+       "\t<tr><th scope=row>2319</th><td>Male</td><td>76.80634</td><td>227.2203</td></tr>\n",
+       "\t<tr><th scope=row>2624</th><td>Male</td><td>76.84268</td><td>211.7242</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 6 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       "  & Gender & Height & Weight\\\\\n",
+       "  & <chr> & <dbl> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t4303 & Male & 76.69096 & 233.1587\\\\\n",
+       "\t191 & Male & 76.70983 & 235.0354\\\\\n",
+       "\t3817 & Male & 76.71998 & 236.1467\\\\\n",
+       "\t4702 & Male & 76.73245 & 241.6866\\\\\n",
+       "\t2319 & Male & 76.80634 & 227.2203\\\\\n",
+       "\t2624 & Male & 76.84268 & 211.7242\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 6 × 3\n",
+       "\n",
+       "| <!--/--> | Gender &lt;chr&gt; | Height &lt;dbl&gt; | Weight &lt;dbl&gt; |\n",
+       "|---|---|---|---|\n",
+       "| 4303 | Male | 76.69096 | 233.1587 |\n",
+       "| 191 | Male | 76.70983 | 235.0354 |\n",
+       "| 3817 | Male | 76.71998 | 236.1467 |\n",
+       "| 4702 | Male | 76.73245 | 241.6866 |\n",
+       "| 2319 | Male | 76.80634 | 227.2203 |\n",
+       "| 2624 | Male | 76.84268 | 211.7242 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "     Gender Height   Weight  \n",
+       "4303 Male   76.69096 233.1587\n",
+       "191  Male   76.70983 235.0354\n",
+       "3817 Male   76.71998 236.1467\n",
+       "4702 Male   76.73245 241.6866\n",
+       "2319 Male   76.80634 227.2203\n",
+       "2624 Male   76.84268 211.7242"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"dataframe\">\n",
+       "<caption>A data.frame: 6 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th></th><th scope=col>Gender</th><th scope=col>Height</th><th scope=col>Weight</th></tr>\n",
+       "\t<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><th scope=row>4795</th><td>Male</td><td>58.40690</td><td>121.3383</td></tr>\n",
+       "\t<tr><th scope=row>2335</th><td>Male</td><td>59.38065</td><td>136.3910</td></tr>\n",
+       "\t<tr><th scope=row>4638</th><td>Male</td><td>59.86808</td><td>117.8038</td></tr>\n",
+       "\t<tr><th scope=row>2192</th><td>Male</td><td>59.93865</td><td>141.4596</td></tr>\n",
+       "\t<tr><th scope=row>1943</th><td>Male</td><td>59.98187</td><td>112.9029</td></tr>\n",
+       "\t<tr><th scope=row>3021</th><td>Male</td><td>60.21702</td><td>146.9566</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 6 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       "  & Gender & Height & Weight\\\\\n",
+       "  & <chr> & <dbl> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t4795 & Male & 58.40690 & 121.3383\\\\\n",
+       "\t2335 & Male & 59.38065 & 136.3910\\\\\n",
+       "\t4638 & Male & 59.86808 & 117.8038\\\\\n",
+       "\t2192 & Male & 59.93865 & 141.4596\\\\\n",
+       "\t1943 & Male & 59.98187 & 112.9029\\\\\n",
+       "\t3021 & Male & 60.21702 & 146.9566\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 6 × 3\n",
+       "\n",
+       "| <!--/--> | Gender &lt;chr&gt; | Height &lt;dbl&gt; | Weight &lt;dbl&gt; |\n",
+       "|---|---|---|---|\n",
+       "| 4795 | Male | 58.40690 | 121.3383 |\n",
+       "| 2335 | Male | 59.38065 | 136.3910 |\n",
+       "| 4638 | Male | 59.86808 | 117.8038 |\n",
+       "| 2192 | Male | 59.93865 | 141.4596 |\n",
+       "| 1943 | Male | 59.98187 | 112.9029 |\n",
+       "| 3021 | Male | 60.21702 | 146.9566 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "     Gender Height   Weight  \n",
+       "4795 Male   58.40690 121.3383\n",
+       "2335 Male   59.38065 136.3910\n",
+       "4638 Male   59.86808 117.8038\n",
+       "2192 Male   59.93865 141.4596\n",
+       "1943 Male   59.98187 112.9029\n",
+       "3021 Male   60.21702 146.9566"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"dataframe\">\n",
+       "<caption>A data.frame: 6 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th></th><th scope=col>Gender</th><th scope=col>Height</th><th scope=col>Weight</th></tr>\n",
+       "\t<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><th scope=row>5688</th><td>Female</td><td>70.66430</td><td>162.2816</td></tr>\n",
+       "\t<tr><th scope=row>7711</th><td>Female</td><td>70.66486</td><td>184.5180</td></tr>\n",
+       "\t<tr><th scope=row>8749</th><td>Female</td><td>70.69714</td><td>194.0488</td></tr>\n",
+       "\t<tr><th scope=row>5093</th><td>Female</td><td>70.71014</td><td>161.3635</td></tr>\n",
+       "\t<tr><th scope=row>7401</th><td>Female</td><td>70.74209</td><td>180.0539</td></tr>\n",
+       "\t<tr><th scope=row>9847</th><td>Female</td><td>70.75141</td><td>192.5836</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 6 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       "  & Gender & Height & Weight\\\\\n",
+       "  & <chr> & <dbl> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t5688 & Female & 70.66430 & 162.2816\\\\\n",
+       "\t7711 & Female & 70.66486 & 184.5180\\\\\n",
+       "\t8749 & Female & 70.69714 & 194.0488\\\\\n",
+       "\t5093 & Female & 70.71014 & 161.3635\\\\\n",
+       "\t7401 & Female & 70.74209 & 180.0539\\\\\n",
+       "\t9847 & Female & 70.75141 & 192.5836\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 6 × 3\n",
+       "\n",
+       "| <!--/--> | Gender &lt;chr&gt; | Height &lt;dbl&gt; | Weight &lt;dbl&gt; |\n",
+       "|---|---|---|---|\n",
+       "| 5688 | Female | 70.66430 | 162.2816 |\n",
+       "| 7711 | Female | 70.66486 | 184.5180 |\n",
+       "| 8749 | Female | 70.69714 | 194.0488 |\n",
+       "| 5093 | Female | 70.71014 | 161.3635 |\n",
+       "| 7401 | Female | 70.74209 | 180.0539 |\n",
+       "| 9847 | Female | 70.75141 | 192.5836 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "     Gender Height   Weight  \n",
+       "5688 Female 70.66430 162.2816\n",
+       "7711 Female 70.66486 184.5180\n",
+       "8749 Female 70.69714 194.0488\n",
+       "5093 Female 70.71014 161.3635\n",
+       "7401 Female 70.74209 180.0539\n",
+       "9847 Female 70.75141 192.5836"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"dataframe\">\n",
+       "<caption>A data.frame: 6 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th></th><th scope=col>Gender</th><th scope=col>Height</th><th scope=col>Weight</th></tr>\n",
+       "\t<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><th scope=row>9286</th><td>Female</td><td>54.26313</td><td>64.70013</td></tr>\n",
+       "\t<tr><th scope=row>6625</th><td>Female</td><td>54.61686</td><td>71.39375</td></tr>\n",
+       "\t<tr><th scope=row>7295</th><td>Female</td><td>54.87373</td><td>78.60667</td></tr>\n",
+       "\t<tr><th scope=row>7618</th><td>Female</td><td>55.14856</td><td>88.81241</td></tr>\n",
+       "\t<tr><th scope=row>5346</th><td>Female</td><td>55.33649</td><td>88.36658</td></tr>\n",
+       "\t<tr><th scope=row>8693</th><td>Female</td><td>55.65189</td><td>85.62178</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 6 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       "  & Gender & Height & Weight\\\\\n",
+       "  & <chr> & <dbl> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t9286 & Female & 54.26313 & 64.70013\\\\\n",
+       "\t6625 & Female & 54.61686 & 71.39375\\\\\n",
+       "\t7295 & Female & 54.87373 & 78.60667\\\\\n",
+       "\t7618 & Female & 55.14856 & 88.81241\\\\\n",
+       "\t5346 & Female & 55.33649 & 88.36658\\\\\n",
+       "\t8693 & Female & 55.65189 & 85.62178\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 6 × 3\n",
+       "\n",
+       "| <!--/--> | Gender &lt;chr&gt; | Height &lt;dbl&gt; | Weight &lt;dbl&gt; |\n",
+       "|---|---|---|---|\n",
+       "| 9286 | Female | 54.26313 | 64.70013 |\n",
+       "| 6625 | Female | 54.61686 | 71.39375 |\n",
+       "| 7295 | Female | 54.87373 | 78.60667 |\n",
+       "| 7618 | Female | 55.14856 | 88.81241 |\n",
+       "| 5346 | Female | 55.33649 | 88.36658 |\n",
+       "| 8693 | Female | 55.65189 | 85.62178 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "     Gender Height   Weight  \n",
+       "9286 Female 54.26313 64.70013\n",
+       "6625 Female 54.61686 71.39375\n",
+       "7295 Female 54.87373 78.60667\n",
+       "7618 Female 55.14856 88.81241\n",
+       "5346 Female 55.33649 88.36658\n",
+       "8693 Female 55.65189 85.62178"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#  Order the males and females by height, pick the top 20 and bottom 20\n",
+    "\n",
+    "#separate based on males and females\n",
+    "wh_males <- wh[1:5000, ]\n",
+    "wh_females <- wh[5001:10000, ]\n",
+    "\n",
+    "#order the males and females by height \n",
+    "wh_males_ordered <- wh_males[order(wh_males$Height), ]\n",
+    "wh_females_ordered <- wh_females[order(wh_females$Height), ]\n",
+    "\n",
+    "#Pick top 20 (tallest) and bottom 20 (shortest) for males and females\n",
+    "male_tall <- wh_males_ordered[(nrow(wh_males_ordered)-19):nrow(wh_males_ordered), ]\n",
+    "male_short <- wh_males_ordered[1:20, ]\n",
+    "\n",
+    "female_tall <- wh_females_ordered[(nrow(wh_females_ordered)-19):nrow(wh_females_ordered), ]\n",
+    "female_short <- wh_females_ordered[1:20, ]\n",
+    "\n",
+    "#Take a look\n",
+    "head(male_tall)\n",
+    "head(male_short)\n",
+    "head(female_tall)\n",
+    "head(female_short)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "ba5029f9-aafe-45d8-91cb-ce11fd540c68",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# t test between all pairs within the groups\n",
+    "t_test_mt_ms <- t.test(male_tall$Height, male_short$Height)  # Male-tall vs Male-short\n",
+    "t_test_mt_ft <- t.test(male_tall$Height, female_tall$Height)  # Male-tall vs Female-tall\n",
+    "t_test_mt_fs <- t.test(male_tall$Height, female_short$Height)  # Male-tall vs Female-short\n",
+    "\n",
+    "t_test_ms_ft <- t.test(male_short$Height, female_tall$Height)  # Male-short vs Female-tall\n",
+    "t_test_ms_fs <- t.test(male_short$Height, female_short$Height)  # Male-short vs Female-short\n",
+    "\n",
+    "t_test_ft_fs <- t.test(female_tall$Height, female_short$Height)  # Female-tall vs Female-short"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "8cde5293-fce5-4e21-8ae9-3763b61c93f5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  male_tall$Height and male_short$Height\n",
+      "t = 77.918, df = 37.079, p-value < 2.2e-16\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " 16.58676 17.47237\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 77.38604  60.35648 \n",
+      "\n",
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  male_tall$Height and female_tall$Height\n",
+      "t = 25.699, df = 37.998, p-value < 2.2e-16\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " 5.588499 6.544245\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 77.38604  71.31967 \n",
+      "\n",
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  male_tall$Height and female_short$Height\n",
+      "t = 99.219, df = 36.99, p-value < 2.2e-16\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " 21.17258 22.05536\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 77.38604  55.77207 \n",
+      "\n",
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  male_short$Height and female_tall$Height\n",
+      "t = -49.939, df = 36.992, p-value < 2.2e-16\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " -11.40801 -10.51838\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 60.35648  71.31967 \n",
+      "\n",
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  male_short$Height and female_short$Height\n",
+      "t = 22.943, df = 37.998, p-value < 2.2e-16\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " 4.179892 4.988914\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 60.35648  55.77207 \n",
+      "\n",
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  female_tall$Height and female_short$Height\n",
+      "t = 71.051, df = 36.9, p-value < 2.2e-16\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " 15.10418 15.99101\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 71.31967  55.77207 \n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Print t-test results\n",
+    "print(t_test_mt_ms)\n",
+    "print(t_test_mt_ft)\n",
+    "print(t_test_mt_fs)\n",
+    "print(t_test_ms_ft)\n",
+    "print(t_test_ms_fs)\n",
+    "print(t_test_ft_fs)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "6713ad3c-7e42-4aea-8ccd-41c3db9d8429",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#ANOVA test on the 4 groups\n",
+    "\n",
+    "#first need to group all 4 categories\n",
+    "group_data <- data.frame(\n",
+    "  Height = c(male_tall$Height, male_short$Height, female_tall$Height, female_short$Height),\n",
+    "  Group = factor(c(rep(\"Male-Tall\", 20), rep(\"Male-Short\", 20), \n",
+    "                   rep(\"Female-Tall\", 20), rep(\"Female-Short\", 20)))\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "id": "b40baa67-1e0e-402c-aefd-00f9d9d90533",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "            Df Sum Sq Mean Sq F value Pr(>F)    \n",
+       "Group        3   5885  1961.5    4101 <2e-16 ***\n",
+       "Residuals   76     36     0.5                   \n",
+       "---\n",
+       "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# Now we can perform the test\n",
+    "height_result <- aov(Height ~ Group, data = group_data)\n",
+    "summary(height_result)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b929ee4a-d520-486d-8f8d-c1df9c494ba0",
+   "metadata": {},
+   "source": [
+    "**What do you infer from the results of \"a\" and \"b\" ?**\n",
+    "\n",
+    "Both the ttest results and the ANOVA results indicate a highly significant differences in height between the male and female groups, as well as between the tall and short categories within each gender. This suggests that gender and height category (tall vs. short) have substantial effects on height in this dataset. The consistency across both tests strengthens the reliability of the conclusions regarding height differences among the groups."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "id": "3fdf1b98-b498-4bca-a694-18267ad879d6",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[1] 1\n",
+      "[1] 7.25294e-24\n",
+      "[1] 2\n",
+      "[1] 1.124967e-24\n",
+      "[1] 3\n",
+      "[1] 4.229016e-24\n",
+      "[1] 4\n",
+      "[1] 7.558377e-24\n",
+      "[1] 5\n",
+      "[1] 1.502875e-23\n",
+      "[1] 6\n",
+      "[1] 4.120223e-23\n",
+      "[1] 7\n",
+      "[1] 5.520941e-23\n",
+      "[1] 8\n",
+      "[1] 8.773891e-23\n",
+      "[1] 9\n",
+      "[1] 1.907612e-22\n",
+      "[1] 10\n",
+      "[1] 1.081732e-21\n",
+      "[1] 11\n",
+      "[1] 1.259805e-20\n",
+      "[1] 12\n",
+      "[1] 1.963647e-20\n",
+      "[1] 13\n",
+      "[1] 2.460471e-20\n",
+      "[1] 14\n",
+      "[1] 3.021351e-20\n",
+      "[1] 15\n",
+      "[1] 4.709412e-20\n",
+      "[1] 16\n",
+      "[1] 6.94582e-20\n",
+      "[1] 17\n",
+      "[1] 3.070392e-19\n",
+      "[1] 18\n",
+      "[1] 2.789017e-19\n",
+      "[1] 19\n",
+      "[1] 3.651147e-19\n"
+     ]
+    }
+   ],
+   "source": [
+    "#  How many males would you have to delete from ms to make the difference not significant \n",
+    "# I am going to remove males from male_short until the difference between ms and fs is >= 0.05\n",
+    "\n",
+    "#male short vs female short\n",
+    "#initialize variables\n",
+    "num_to_remove <- 0\n",
+    "p_value <- 0\n",
+    "ms <- male_short[order(male_short$Height), ]\n",
+    "# Iteratively remove males from male-short group\n",
+    "while (nrow(ms) > 1) {\n",
+    "  # Perform the t-test\n",
+    "  t_test_result <- t.test(ms$Height, female_short$Height)\n",
+    "  p_value <- t_test_result$p.value\n",
+    "  \n",
+    "  # Check if the p-value is greater than 0.05\n",
+    "  if (p_value > 0.05) { #if the p value is greater than 0.05 then break from the loop\n",
+    "    break\n",
+    "  }\n",
+    "  \n",
+    "  # Remove the shortest male from the male-short group\n",
+    "  ms <- ms[-1, ]  # Remove the first row (the shortest)\n",
+    "  \n",
+    "  # Increment the count of removed males\n",
+    "  num_to_remove <- num_to_remove + 1\n",
+    "\n",
+    "  print(num_to_remove)\n",
+    "  print(p_value)\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1c4ffa37-4d72-41d6-954b-da9ebf577656",
+   "metadata": {},
+   "source": [
+    "I removed 19 of the males, and the difference between ms and fs is still significant. \n",
+    "This means that even though all the shortest males were removed first, there is still a significant difference between the heights of the two groups. Removing all but one of the short males is still not enough to make the p-value between the male-short and female-short groups non-significant. This indicates that the values of the two groups are too far apart for the difference to be considered non-significant. The large difference in mean heights between the male-short and female-short groups is likely driving the statistical significance, even with only one male left in the comparisonAlternatively, removing all but one of the males drives an imbalance between the sample sizes, which could create a situation where the t-test is sensitive to any difference in the means. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 69,
+   "id": "29b468fb-45fb-4aab-9e5b-29aff4cca6a4",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[1] 1\n",
+      "[1] 1.040749e-42\n",
+      "[1] 2\n",
+      "[1] 4.792002e-39\n",
+      "[1] 3\n",
+      "[1] 9.411578e-37\n",
+      "[1] 4\n",
+      "[1] 5.13344e-36\n",
+      "[1] 5\n",
+      "[1] 3.267959e-35\n",
+      "[1] 6\n",
+      "[1] 3.756007e-34\n",
+      "[1] 7\n",
+      "[1] 7.554031e-34\n",
+      "[1] 8\n",
+      "[1] 2.164434e-33\n",
+      "[1] 9\n",
+      "[1] 1.151717e-32\n",
+      "[1] 10\n",
+      "[1] 3.082487e-31\n",
+      "[1] 11\n",
+      "[1] 1.596792e-29\n",
+      "[1] 12\n",
+      "[1] 3.378362e-29\n",
+      "[1] 13\n",
+      "[1] 5.156414e-29\n",
+      "[1] 14\n",
+      "[1] 7.608901e-29\n",
+      "[1] 15\n",
+      "[1] 1.570103e-28\n",
+      "[1] 16\n",
+      "[1] 2.955729e-28\n",
+      "[1] 17\n",
+      "[1] 2.296525e-27\n",
+      "[1] 18\n",
+      "[1] 2.104231e-27\n",
+      "[1] 19\n",
+      "[1] 3.108876e-27\n"
+     ]
+    }
+   ],
+   "source": [
+    "#male short vs male tall\n",
+    "num_to_remove <- 0\n",
+    "p_value <- 0\n",
+    "ms <- male_short[order(male_short$Height), ]\n",
+    "# Iteratively remove males from male-short group\n",
+    "while (nrow(ms) > 1) {\n",
+    "  # Perform the t-test\n",
+    "  t_test_result <- t.test(ms$Height, male_tall$Height)\n",
+    "  p_value <- t_test_result$p.value\n",
+    "  \n",
+    "  # Check if the p-value is greater than 0.05\n",
+    "    # If it is then exit the loop\n",
+    "  if (p_value > 0.05) {\n",
+    "    break\n",
+    "  }\n",
+    "  \n",
+    "  # Remove the shortest male from the male-short group\n",
+    "  ms <- ms[-1, ]  # Remove the first row (the shortest)\n",
+    "  \n",
+    "  # Increment the count of removed males\n",
+    "  num_to_remove <- num_to_remove + 1\n",
+    "\n",
+    "  print(num_to_remove)\n",
+    "  print(p_value)\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "70003e29-ca3c-47a1-9d34-988c802fd435",
+   "metadata": {},
+   "source": [
+    "Similarly to above, removing all but one of the short males is still not enough to make the p-value between the male-short and male-tall groups non-significant. This indicates that the values of the two groups are too far apart for the difference to be considered non-significant. The large difference in mean heights between the groups is likely driving the statistical significance, even with only one short male left in the comparison"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "id": "53ffaf23-da0b-4421-a67a-163594a97800",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[1] 1\n",
+      "[1] 1.495856e-35\n",
+      "[1] 2\n",
+      "[1] 7.954065e-33\n",
+      "[1] 3\n",
+      "[1] 4.882524e-31\n",
+      "[1] 4\n",
+      "[1] 1.902142e-30\n",
+      "[1] 5\n",
+      "[1] 8.366059e-30\n",
+      "[1] 6\n",
+      "[1] 5.845807e-29\n",
+      "[1] 7\n",
+      "[1] 1.045066e-28\n",
+      "[1] 8\n",
+      "[1] 2.466417e-28\n",
+      "[1] 9\n",
+      "[1] 9.460386e-28\n",
+      "[1] 10\n",
+      "[1] 1.294293e-26\n",
+      "[1] 11\n",
+      "[1] 3.011378e-25\n",
+      "[1] 12\n",
+      "[1] 5.565931e-25\n",
+      "[1] 13\n",
+      "[1] 7.93041e-25\n",
+      "[1] 14\n",
+      "[1] 1.100045e-24\n",
+      "[1] 15\n",
+      "[1] 1.992769e-24\n",
+      "[1] 16\n",
+      "[1] 3.353808e-24\n",
+      "[1] 17\n",
+      "[1] 1.743829e-23\n",
+      "[1] 18\n",
+      "[1] 1.635417e-23\n",
+      "[1] 19\n",
+      "[1] 2.251637e-23\n"
+     ]
+    }
+   ],
+   "source": [
+    "#male short vs female tall\n",
+    "num_to_remove <- 0\n",
+    "p_value <- 0\n",
+    "ms <- male_short[order(male_short$Height), ]\n",
+    "# Iteratively remove males from male-short group\n",
+    "while (nrow(ms) > 1) {\n",
+    "  # Perform the t-test\n",
+    "  t_test_result <- t.test(ms$Height, female_tall$Height)\n",
+    "  p_value <- t_test_result$p.value\n",
+    "  \n",
+    "  # Check if the p-value is greater than 0.05\n",
+    "    # If it is then exit the loop\n",
+    "  if (p_value > 0.05) {\n",
+    "    break\n",
+    "  }\n",
+    "  \n",
+    "  # Remove the shortest male from the male-short group\n",
+    "  ms <- ms[-1, ]  # Remove the first row (the shortest)\n",
+    "  \n",
+    "  # Increment the count of removed males\n",
+    "  num_to_remove <- num_to_remove + 1\n",
+    "\n",
+    "  print(num_to_remove)\n",
+    "  print(p_value)\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "498f0e14-cc3a-4119-bf46-f7874287722a",
+   "metadata": {},
+   "source": [
+    "In all three cases, removing males from the male-short group was not enough to make the comparison between the male-short and female-short groups statistically non-significant. This suggests that the difference between the two groups is large enough that even reducing the male sample size significantly does not eliminate the statistical significance."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "id": "25dc3e8b-cf31-4789-ab59-85662b5e1866",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "            Df Sum Sq Mean Sq F value Pr(>F)    \n",
+       "Group        3   5885  1961.5    4101 <2e-16 ***\n",
+       "Residuals   76     36     0.5                   \n",
+       "---\n",
+       "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#ANOVA TEST\n",
+    "group_data <- data.frame(\n",
+    "  Height = c(male_tall$Height, male_short$Height, female_tall$Height, female_short$Height),\n",
+    "  Group = factor(c(rep(\"Male-Tall\", 20), rep(\"Male-Short\", 20), \n",
+    "                   rep(\"Female-Tall\", 20), rep(\"Female-Short\", 20)))\n",
+    ")\n",
+    "#for the whole data set without any removals\n",
+    "anova_result <- aov(Height ~ Group, data = group_data)\n",
+    "summary(anova_result)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "b282ba73-8869-4cbb-a962-420d280be4e3",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "            Df Sum Sq Mean Sq F value Pr(>F)    \n",
+       "Group        3   5022  1674.0    3325 <2e-16 ***\n",
+       "Residuals   57     29     0.5                   \n",
+       "---\n",
+       "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "group_data <- data.frame(\n",
+    "  Height = c(male_tall$Height, male_short$Height[20:20], female_tall$Height, female_short$Height),\n",
+    "  Group = factor(c(rep(\"Male-Tall\", 20), rep(\"Male-Short\", 1), \n",
+    "                   rep(\"Female-Tall\", 20), rep(\"Female-Short\", 20)))\n",
+    ")\n",
+    "anova_result <- aov(Height ~ Group, data = group_data)\n",
+    "summary(anova_result)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9e95976d-def0-4308-9856-d82d35ddbcec",
+   "metadata": {},
+   "source": [
+    "The ANOVA test indicates that removing males from the male-short group was insufficient to make the comparison with the male-tall, female-short, and female-tall groups statistically non-significant. This suggests that the differences between the male-short group and all other groups are large enough that even significantly reducing the male sample size does not eliminate the statistical significance."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "47e51714-0661-4812-8091-08ad8897b46e",
+   "metadata": {},
+   "source": [
+    "**How many femelas would you have to delete from ft to reduce significance of the difference ? (you would delete\n",
+    "the tallest females first).**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 94,
+   "id": "1d25c9f3-fb9c-4be5-a7ca-fa28f6515531",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "            Df Sum Sq Mean Sq F value Pr(>F)    \n",
+       "Group        3   5266  1755.2    3896 <2e-16 ***\n",
+       "Residuals   57     26     0.5                   \n",
+       "---\n",
+       "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##ANOVA test\n",
+    "group_data <- data.frame(\n",
+    "  Height = c(male_tall$Height, male_short$Height, female_tall$Height[20:20], female_short$Height),\n",
+    "  Group = factor(c(rep(\"Male-Tall\", 20), rep(\"Male-Short\", 20), \n",
+    "                   rep(\"Female-Tall\", 1), rep(\"Female-Short\", 20)))\n",
+    ")\n",
+    "anova_result <- aov(Height ~ Group, data = group_data)\n",
+    "summary(anova_result)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 101,
+   "id": "c6a26ff4-4602-42c3-99c6-912b1f8dd874",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  female_tall$Height and female_short$Height\n",
+      "t = 71.051, df = 36.9, p-value < 2.2e-16\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " 15.10418 15.99101\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 71.31967  55.77207 \n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "test<- t.test(female_tall$Height, female_short$Height)\n",
+    "print(test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 106,
+   "id": "b972e58a-2974-4c89-aba0-d4cb3cafe175",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Removing tallest female height: 73.38959 \n",
+      "[1] 1\n",
+      "[1] 4.439294e-41\n",
+      "Removing tallest female height: 72.42977 \n",
+      "[1] 2\n",
+      "[1] 6.358086e-43\n",
+      "Removing tallest female height: 72.26475 \n",
+      "[1] 3\n",
+      "[1] 2.239687e-42\n",
+      "Removing tallest female height: 72.08871 \n",
+      "[1] 4\n",
+      "[1] 1.906532e-41\n",
+      "Removing tallest female height: 71.99126 \n",
+      "[1] 5\n",
+      "[1] 6.562196e-40\n",
+      "Removing tallest female height: 71.5522 \n",
+      "[1] 6\n",
+      "[1] 8.467987e-37\n",
+      "Removing tallest female height: 71.43895 \n",
+      "[1] 7\n",
+      "[1] 4.549301e-35\n",
+      "Removing tallest female height: 71.27751 \n",
+      "[1] 8\n",
+      "[1] 3.611072e-33\n",
+      "Removing tallest female height: 71.12279 \n",
+      "[1] 9\n",
+      "[1] 1.037411e-31\n",
+      "Removing tallest female height: 71.07045 \n",
+      "[1] 10\n",
+      "[1] 6.536253e-31\n",
+      "Removing tallest female height: 70.95066 \n",
+      "[1] 11\n",
+      "[1] 5.841448e-30\n",
+      "Removing tallest female height: 70.93219 \n",
+      "[1] 12\n",
+      "[1] 1.41459e-29\n",
+      "Removing tallest female height: 70.8371 \n",
+      "[1] 13\n",
+      "[1] 7.020164e-29\n",
+      "Removing tallest female height: 70.81754 \n",
+      "[1] 14\n",
+      "[1] 1.150486e-28\n",
+      "Removing tallest female height: 70.75141 \n",
+      "[1] 15\n",
+      "[1] 2.804983e-28\n",
+      "Removing tallest female height: 70.74209 \n",
+      "[1] 16\n",
+      "[1] 3.050146e-28\n",
+      "Removing tallest female height: 70.71014 \n",
+      "[1] 17\n",
+      "[1] 4.480821e-28\n",
+      "Removing tallest female height: 70.69714 \n",
+      "[1] 18\n",
+      "[1] 4.908537e-28\n",
+      "Removing tallest female height: 70.66486 \n",
+      "[1] 19\n",
+      "[1] 8.545275e-28\n"
+     ]
+    }
+   ],
+   "source": [
+    "# How many females would you have to delete from ft to make the difference not significant?\n",
+    "# Initialize variables\n",
+    "num_to_remove <- 0\n",
+    "p_value <- 0\n",
+    "\n",
+    "# Sort female-tall group for removal (remove the tallest first)\n",
+    "ft <- female_tall[order(-female_tall$Height), ]\n",
+    "fs <- female_short  # Use the full female-short group\n",
+    "\n",
+    "# Iteratively remove females from female-tall group\n",
+    "while (nrow(ft) > 1) {\n",
+    "  # Perform the t-test between female tall and female short\n",
+    "  t_test_result <- t.test(ft$Height, female_short$Height)\n",
+    "  p_value <- t_test_result$p.value\n",
+    "  \n",
+    "  # Check if the p-value is greater than 0.05\n",
+    "  if (p_value > 0.05) {\n",
+    "    break\n",
+    "  }\n",
+    "  \n",
+    "  # Remove the tallest female from the female-tall group\n",
+    "  cat(\"Removing tallest female height:\", ft$Height[1], \"\\n\")\n",
+    "  ft <- ft[-1, ]  # Remove the first row (the tallest)\n",
+    "  \n",
+    "  # Increment the count of removed females\n",
+    "  num_to_remove <- num_to_remove + 1\n",
+    "\n",
+    "  print(num_to_remove)\n",
+    "  print(p_value)\n",
+    "}\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4f779393-dd22-423c-a881-4f83b410c0c9",
+   "metadata": {},
+   "source": [
+    "Still significant, even after removing all tall females- ft vs fs"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 107,
+   "id": "ddd1220e-ed5b-4d44-944b-0ef1e97693b5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[1] 1\n",
+      "[1] 1.256794e-25\n",
+      "[1] 2\n",
+      "[1] 2.113337e-26\n",
+      "[1] 3\n",
+      "[1] 3.641643e-26\n",
+      "[1] 4\n",
+      "[1] 1.077492e-25\n",
+      "[1] 5\n",
+      "[1] 6.300063e-25\n",
+      "[1] 6\n",
+      "[1] 1.879505e-23\n",
+      "[1] 7\n",
+      "[1] 9.789177e-23\n",
+      "[1] 8\n",
+      "[1] 5.977533e-22\n",
+      "[1] 9\n",
+      "[1] 2.320288e-21\n",
+      "[1] 10\n",
+      "[1] 4.710097e-21\n",
+      "[1] 11\n",
+      "[1] 1.120812e-20\n",
+      "[1] 12\n",
+      "[1] 1.53974e-20\n",
+      "[1] 13\n",
+      "[1] 2.888482e-20\n",
+      "[1] 14\n",
+      "[1] 3.410877e-20\n",
+      "[1] 15\n",
+      "[1] 4.781456e-20\n",
+      "[1] 16\n",
+      "[1] 4.80331e-20\n",
+      "[1] 17\n",
+      "[1] 5.472153e-20\n",
+      "[1] 18\n",
+      "[1] 5.528875e-20\n",
+      "[1] 19\n",
+      "[1] 6.814322e-20\n",
+      "Number of females removed to make the difference non-significant: 19 \n"
+     ]
+    }
+   ],
+   "source": [
+    "# How many females would you have to delete from ft to make the difference not significant?\n",
+    "# Initialize variables\n",
+    "num_to_remove <- 0\n",
+    "p_value <- 0\n",
+    "\n",
+    "# Sort female-tall group for removal (remove the tallest first)\n",
+    "ft <- female_tall[order(-female_tall$Height), ]\n",
+    "\n",
+    "# Iteratively remove females from female-tall group\n",
+    "while (nrow(ft) > 1) {\n",
+    "  # Perform the t-test between female tall and female short\n",
+    "  t_test_result <- t.test(ft$Height, male_tall$Height)\n",
+    "  p_value <- t_test_result$p.value\n",
+    "  \n",
+    "  # Check if the p-value is greater than 0.05\n",
+    "  if (p_value > 0.05) {\n",
+    "    break\n",
+    "  }\n",
+    "  \n",
+    "  # Remove the tallest female from the female-tall group\n",
+    "  ft <- ft[-1, ]  # Remove the first row (the tallest)\n",
+    "  \n",
+    "  # Increment the count of removed females\n",
+    "  num_to_remove <- num_to_remove + 1\n",
+    "\n",
+    "  print(num_to_remove)\n",
+    "  print(p_value)\n",
+    "}\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c1a6e4ac-df8e-4ab6-854c-2fb0bc5c8fea",
+   "metadata": {},
+   "source": [
+    "still siginificant even after removing all tall females- ft vs mt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 108,
+   "id": "dedf33f9-9337-43a0-9310-d9c1eea92076",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[1] 1\n",
+      "[1] 1.495856e-35\n",
+      "[1] 2\n",
+      "[1] 3.101141e-37\n",
+      "[1] 3\n",
+      "[1] 8.210369e-37\n",
+      "[1] 4\n",
+      "[1] 4.533992e-36\n",
+      "[1] 5\n",
+      "[1] 8.054951e-35\n",
+      "[1] 6\n",
+      "[1] 2.885252e-32\n",
+      "[1] 7\n",
+      "[1] 7.934634e-31\n",
+      "[1] 8\n",
+      "[1] 3.044875e-29\n",
+      "[1] 9\n",
+      "[1] 5.069117e-28\n",
+      "[1] 10\n",
+      "[1] 2.391996e-27\n",
+      "[1] 11\n",
+      "[1] 1.512587e-26\n",
+      "[1] 12\n",
+      "[1] 3.210621e-26\n",
+      "[1] 13\n",
+      "[1] 1.242454e-25\n",
+      "[1] 14\n",
+      "[1] 1.898108e-25\n",
+      "[1] 15\n",
+      "[1] 4.045184e-25\n",
+      "[1] 16\n",
+      "[1] 4.370121e-25\n",
+      "[1] 17\n",
+      "[1] 6.080303e-25\n",
+      "[1] 18\n",
+      "[1] 6.605936e-25\n",
+      "[1] 19\n",
+      "[1] 1.058551e-24\n"
+     ]
+    }
+   ],
+   "source": [
+    "# How many females would you have to delete from ft to make the difference not significant?\n",
+    "# Initialize variables\n",
+    "num_to_remove <- 0\n",
+    "p_value <- 0\n",
+    "\n",
+    "# Sort female-tall group for removal (remove the tallest first)\n",
+    "ft <- female_tall[order(-female_tall$Height), ]\n",
+    "\n",
+    "# Iteratively remove females from female-tall group\n",
+    "while (nrow(ft) > 1) {\n",
+    "  # Perform the t-test between female tall and female short\n",
+    "  t_test_result <- t.test(ft$Height, male_short$Height)\n",
+    "  p_value <- t_test_result$p.value\n",
+    "  \n",
+    "  # Check if the p-value is greater than 0.05\n",
+    "  if (p_value > 0.05) {\n",
+    "    break\n",
+    "  }\n",
+    "  \n",
+    "  # Remove the tallest female from the female-tall group\n",
+    "  ft <- ft[-1, ]  # Remove the first row (the tallest)\n",
+    "  \n",
+    "  # Increment the count of removed females\n",
+    "  num_to_remove <- num_to_remove + 1\n",
+    "\n",
+    "  print(num_to_remove)\n",
+    "  print(p_value)\n",
+    "}\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "db2f20c2-9315-4c8d-acbf-94cfcb943eb9",
+   "metadata": {},
+   "source": [
+    "The three t test and ANOVA test indicates that removing females from the female tall group was insufficient to make the comparison with the male-tall, female-short, and male-short groups statistically non-significant. This suggests that the differences between the female-tall group and all other groups are large enough that even significantly reducing the female sample size does not eliminate the statistical significance."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e2706b4b-e4b2-4e3b-8540-38711b951295",
+   "metadata": {},
+   "source": [
+    "**Could you use the ms v/s ft, with or without deletions to prove the opposite of what we know from the full set (on average, males are taller than females).**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "id": "8ec3dc54-e389-42e7-aafa-93c720d10e4c",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "    Gender              Height          Weight     \n",
+       " Length:20          Min.   :58.41   Min.   :112.9  \n",
+       " Class :character   1st Qu.:60.16   1st Qu.:127.9  \n",
+       " Mode  :character   Median :60.49   Median :135.5  \n",
+       "                    Mean   :60.36   Mean   :135.7  \n",
+       "                    3rd Qu.:60.80   3rd Qu.:142.8  \n",
+       "                    Max.   :60.97   Max.   :156.5  "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    Gender              Height          Weight     \n",
+       " Length:20          Min.   :70.66   Min.   :161.4  \n",
+       " Class :character   1st Qu.:70.75   1st Qu.:176.0  \n",
+       " Mode  :character   Median :71.01   Median :183.3  \n",
+       "                    Mean   :71.32   Mean   :181.4  \n",
+       "                    3rd Qu.:71.66   3rd Qu.:190.6  \n",
+       "                    Max.   :73.39   Max.   :194.0  "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "summary(male_short)\n",
+    "summary(female_tall)\n",
+    "#just to take a look"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "id": "830da425-a647-43fc-afa3-e08e7d54fa60",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "\tWelch Two Sample t-test\n",
+      "\n",
+      "data:  male_short$Height and female_tall$Height\n",
+      "t = -49.939, df = 36.992, p-value < 2.2e-16\n",
+      "alternative hypothesis: true difference in means is not equal to 0\n",
+      "95 percent confidence interval:\n",
+      " -11.40801 -10.51838\n",
+      "sample estimates:\n",
+      "mean of x mean of y \n",
+      " 60.35648  71.31967 \n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Perform a t test between the two groups\n",
+    "test <- t.test(male_short$Height, female_tall$Height)\n",
+    "print(test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "94331ad4-03ff-405e-ac18-e9d061ade342",
+   "metadata": {},
+   "source": [
+    "The p-value (2.2e-16) indicates a statistically significant difference between the heights of the male-short (without any deletions) and female-tall groups. The mean height of males in the male-short group is 60.36, while the mean height of females in the female-tall group is 71.32. This comparison highlights that, in this specific subset of data, the average height of short males is less than that of tall females, which contrasts with the general observation from the full dataset that, on average, males are taller than females."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e44e29aa-7321-4506-9b1c-0bbea990e0a2",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "R",
+   "language": "R",
+   "name": "ir"
+  },
+  "language_info": {
+   "codemirror_mode": "r",
+   "file_extension": ".r",
+   "mimetype": "text/x-r-source",
+   "name": "R",
+   "pygments_lexer": "r",
+   "version": "4.1.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
