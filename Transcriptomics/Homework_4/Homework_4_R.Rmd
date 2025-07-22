@@ -1,0 +1,221 @@
+---
+title: "Homework 4"
+author: "Tiffany Tang"
+date: "2025-07-16"
+output: html_document
+---
+
+
+## Step 1
+Load the file GSE124548.raw.filtered.txt and create a new dataframe and call it readcount. Use the first column (EntrezID) in the original file as
+the rownames of readcount.
+
+```{r step1}
+# Set file path variable
+inpath <- "C:\\Users\\tiffa\\OneDrive\\Desktop\\Masters in Bioinformatics\\Transcriptomics\\Homework 4\\GSE124548.raw.filtered.txt"
+
+# load into the data 
+readcount <- read.delim(inpath, row.names = 1)
+```
+
+## Step 2
+Create a dataframe, called expgroup, with one column, labeled condition, that correctly assigns which column is healthy and which is CF. Use
+the column names of readount as rownames of expgroup.
+- all healthy individuals have `HC` in the colname
+- all CF individuals have `Base` in the colname
+
+
+```{r step2}
+ # Use grep to assign condition
+condition <- ifelse(grepl("HC", colnames(readcount)), "Healthy",
+                    ifelse(grepl("Base", colnames(readcount)), "CF", NA))
+
+# Next I will create expgroup using the condition variable
+expgroup <- data.frame(condition = condition)
+
+# Lets set the rownames to name the column names of readcount
+rownames(expgroup) <- colnames(readcount)
+```
+
+## Step 3
+Load the Deseq2 package ( install if necessary ) and create a Counts Dataset Matrix using the command DESeqDataSetFromMatrix() and call it
+cds.
+
+```{r step3}
+# load in DESeq2
+library(DESeq2)
+
+# create data set matrix
+
+cds <- DESeqDataSetFromMatrix(countData = readcount, # this is my matrix
+                              colData = expgroup, # This is the metadata
+                              design = ~ condition) # variable I want to test for (healthy vs base)
+```
+## Step 4
+Use the functions estimateSizeFactors and estimateDispersions so that Deseq2 can correct for size of library and estimates the dispersion.
+Plot the dispersion using plotDispEsts. What does the graph tell you?
+
+```{r step4}
+# Use function estimateSize factors
+size_cds <- estimateSizeFactors(cds)
+
+# Use function EstimateDispersions
+disp_cds <- estimateDispersions(size_cds)
+
+# Plot
+plotDispEsts(disp_cds)
+```
+From the plot above, we can see that as a gene's read count increases (toward the right end of the plot), the dispersion decreases. In contrast, genes with lower read counts show more variability in dispersion, as indicated by the wider spread of black dots. This pattern is expected, as low-count genes typically exhibit more noise and less stable variance estimates.
+
+
+## Step 5
+Perform the Differential expression and obtain the results using DESeq and results functions.
+
+```{r step5}
+# DESeq differential expression analysis
+cds_deseq <- DESeq(disp_cds)
+
+# Extract the results 
+res <- results(cds_deseq)
+
+# For my own curiousity 
+summary(res)
+```
+
+## Step 6
+How many genes have an adjusted p-value of less than 0.05 and log2FoldChange greater than 1 or less than -1 ? Save this list of genes as
+diffexpgenes
+
+```{r step6}
+# filter for adjusted p-val less than 0.05, and log2FC > 1 or log2FC < -1
+# can do with abs for log2FC
+diffexpgenes <- res[which(res$padj < 0.05 & abs(res$log2FoldChange) > 1), ]
+
+# count rows
+nrow(diffexpgenes)
+```
+There are 209 genes that have an adjusted p-value of less than 0.05 and a log 2 fold change of greater than 1 or less than -1.
+
+## Step 7
+Get the normalized values of the counts data in cds using the counts() function with option normalized=T and call this normvalues.
+
+```{r step7}
+# Get normalized values of the counts data
+normvalues <- counts(cds_deseq, normalized = TRUE)
+
+# Just to look
+head(normvalues)
+```
+
+## Step 8
+Create a new matrix or dataframe that contains the expression values from normvalues for just the diffexpgenes and call it diffexpvalues.
+```{r step8}
+
+# New matrix that has just the expression values
+diffexpvalues <- normvalues[rownames(diffexpgenes), ]
+
+head(diffexpvalues) # Just to look
+```
+
+## Step 9
+Cluster the differentially expressed genes using hierarchical clustering and use the cutree function to create 8 groups. How many genes are in each group?
+
+```{r step9}
+# Compute the distance matrix 
+# Doing this with the genes as rows
+gene_dist <- dist(diffexpvalues)
+
+# Perform hierarchical clustering
+gene_hclust <- hclust(gene_dist)
+
+# Cut the tree into 8 groups
+gene_clusters <- cutree(gene_hclust, k = 8)
+
+# Check number of genes in each cluster
+table(gene_clusters)
+```
+
+How many genes are in each group?
+**Cluster 1:** 195
+**Cluster 2:** 1
+**Cluster 3:** 3
+**Cluster 4:** 5
+**Cluster 5:** 1
+**Cluster 6:** 2
+**Cluster 7:** 1
+**Cluster 8:** 1
+
+We can see that cluser 1 has the most amount of genes. 
+
+## Step 10
+Create a heatmap of all the genes using the pheatmap package. Some options you should pay attention to are: - scale ( scaling gene values
+shows expression pattern changes rather than magnitude) - cluster_rows ( define how the rows should be clustered) - annotation_col ( color code
+the different samples based on a category- health or cf)
+```{r step10}
+# Load library
+library(pheatmap)
+
+# Create annotations for the heatmap columns
+# Either healthy or CF
+annotation_col <- data.frame(Condition = expgroup[colnames(diffexpvalues), "condition"])
+rownames(annotation_col) <- colnames(diffexpvalues)
+
+# Run the heatmap
+pheatmap(diffexpvalues,
+         scale = "row",
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         annotation_col = annotation_col,
+         show_rownames = FALSE,
+         fontsize_col = 8)
+```
+
+## Step 11
+Use the GOstats package to determing which GO-terms are enriched in diffexpgenes. To do this you will need to install the following packages
+from Bioconductor:
+
+Now create a new GOHyperGParams object using the new() function and save it as variable called params. The geneIds is diffexpgenes.
+These should be the EntrezIDs we made into rownames in the beginning. The universeGeneIds is the rownames of readcount. The annotation is
+org.Hs.eg and the ontology we are going to use is BP with a pvaluecutoff of 0.001 and our testDirection is over.
+```{r step11}
+# Load in libraries
+library(GOstats)
+library(org.Hs.eg.db)
+
+# Get the gene ID's, this is the row names
+# Running into some errors, omitting NAs
+geneIds <- unique(na.omit(as.character(rownames(diffexpgenes))))
+
+# Need also the universe IDs, this will be from res
+# omit NAs, having some issues
+universeIds <- unique(na.omit(as.character(rownames(readcount))))
+
+# Define GO enrichment search parameters
+params <- new("GOHyperGParams",
+              geneIds = geneIds,
+              universeGeneIds = universeIds,
+              annotation = "org.Hs.eg.db",
+              ontology = "BP",
+              pvalueCutoff = 0.001,
+              conditional = FALSE,
+              testDirection = "over")
+
+# Run test
+goResults <- hyperGTest(params)
+
+# View summary
+summary(goResults)
+
+```
+
+## Step 12
+What conclusions can you make about your analysis?
+
+The differential expression analysis comparing healthy controls and cystic fibrosis patients before treatment reveals a strong immune-related transcriptional signature in CF patients. GO enrichment of the top differentially expressed genes highlights a significant over-representation of immune and defense-related biological processes. Notably enriched terms include “immune response,” “defense response,” “inflammatory response,” and “response to bacterium,” all with highly significant p-values (< 1e-7) and odds ratios above 2.5. These results suggest that individuals with CF exhibit heightened immune system activity, likely reflecting the chronic inflammatory state and persistent infection characteristic of the disease. This immune dysregulation may contribute to the variability in response to Lumacaftor/Ivacaftor treatment observed in clinical studies, underscoring the relevance of transcriptomic profiling for understanding disease mechanisms and predicting treatment outcomes.
+
+
+
+
+
+
+

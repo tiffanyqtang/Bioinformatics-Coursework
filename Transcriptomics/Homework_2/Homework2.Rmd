@@ -1,0 +1,148 @@
+---
+title: "Homework 2"
+author: "Tiffany Tang"
+date: "2025-06-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1
+**1. Why is it important to know the variance and standard error of a statistic for sample data? How do we calculate these values in R?**
+- Variance measures how spread out the data is around the mean. If the variation is tight, it means that the values are closer to the mean. Standard error measures how much the sample mean is expected to vary from the true population mean. A smaller standard error means that the estimate is more reliable. Both of these are important in interpreting results, construction confidence intervals and construction hypothesis tests such as t-tests or f-tests. 
+- To calculate variance in R you can use `var(x)`
+- To calculate standard error in R you can use `sd(x)/sqrt(length(data))`
+
+**2. What are the differences between the varieties of two-sample t-tests, and how can we tell which to use and how do we tell R how to apply the correct test using t-test()?**
+- There are three main varieties of two-sample t-tests, and the appropriate one to use depends on whether your samples are paired or unpaired and whether they have equal variances. A paired t-test is used when the two samples are related or dependent, such as measurements taken from the same subjects before and after a treatment. An unpaired t-test is used when the samples are independent. Among unpaired t-tests, if the variances of the two groups are equal, you use Student’s t-test, and if the variances are unequal, you use Welch’s t-test, which is the default in R. To decide between equal or unequal variances, you can use var.test(x, y), which performs an F-test. In R, you specify the correct test using the t.test() function: use `t.test(x, y, paired = TRUE)` for a paired t-test, `t.test(x, y, var.equal = TRUE)` for Student’s t-test (equal variances), and `t.test(x, y)` for Welch’s t-test (unequal variances, the default).
+
+**3. What is the R function for a nonparametric equivalent to a two-sample ttest?**
+- The R function for a nonparametric equivalent to a two sample t-test is the Wilcoxon rank sum test: `wilcox.test(x,y)`
+
+**4. What statistic is more appropriate when you want to identify interactions between multiple factors?**
+- The most appropriate statistic for the analysis between multiple factors is the ANOVA. 
+
+**5. When is the lm() function more appropriate to use than aov() function to perform an anova analysis?**
+- The `lm()` function is more appropriate than `aov()` when you want to perform NOVA within a regression framework and have more flexibility for model diagnostics, interpretation of coefficients or extending to other types of models. `aov()` is made specifically for classic ANOVA cases whereas `lm()` fits a more general linear model. 
+
+
+## Part 2
+**1. Write a function getPvalue that performs a linear model lm() to
+compare the control samples to the different skin diseases**
+```{r Q1}
+#install.packages("broom") # install first
+library(broom) #use this library as suggested in the question
+
+#function is to have two inputs: 
+# 1. numerical vector for all values for one genes
+# 2. a factor that specifies which column belongs to which group
+
+# function should have one output: a vector of p-values for each disease coefficient.
+
+getPvalue <- function(geneValues, groupFactors){
+  # make sure that the function has two inputs
+  # make sure that groupFactor is a factor and that the reference level is healthy
+  groupFactors <- relevel(as.factor(groupFactors), ref= "Control")
+  #relevel- levels of a factor are re ordered so that the level specified by ref is first and others are moved down
+  
+  # linear model time
+  model <- lm(geneValues ~ groupFactors)
+  
+  # tidy output of the model
+  tidyModel <- tidy(model)
+  
+  # get only the coefficient
+  pvals <- tidyModel$p.value
+  
+  return(pvals)
+                          
+}
+
+# read in the expression data
+# first row (genes) is going to be the header, and the first column (sampes) will be row names
+# each row is a gene
+expr_data <- read.table("GSE63741_series_matrix.txt", header = TRUE, 
+                        sep = "\t", row.names = 1)
+head(expr_data)
+
+# read in the sample data
+sample_info <- read.table("sampletype.txt", header = TRUE, sep = "\t")
+head(sample_info)
+
+
+# Test run on the first gene
+gene_values <- as.numeric(expr_data[1,])
+group_factors <- as.factor(as.character(sample_info[1,]))
+
+# Run getPvalue function
+pvalues <- getPvalue(gene_values, group_factors)
+
+print(pvalues)
+```
+```{r test_check}
+# just double checking that the function is outputting what is expected
+# manually run lm()
+group_factors <- relevel(as.factor(group_factors), ref = "Control")
+model <- lm(gene_values ~ group_factors)
+
+#check the summary
+summary(model)
+```
+The manual check appears to match with the output of the function!
+
+**2. Use the getPvalue function in a loop or apply function to retrieve the pvalues for each gene.**
+```{r Q2}
+# get group factors ready, should be ready from chunk Q1, but always good to double check
+# sample labels are the same for each gene!
+group_factors <- as.factor(as.character(sample_info[1,]))
+# use apply function to do this for each row in expr_data
+all_pvalues <- apply(expr_data, 1, function(row){
+  gene_values <- as.numeric(row) # make sure its numeric, get expression value for one gene across all samples
+  getPvalue(gene_values, group_factors) # call function on this gene
+})
+
+# transpose so that rows = genes, columns = group comparisons
+all_pvalues <- t(all_pvalues)
+all_pvalues <- all_pvalues[, 2:5] # exclude first column since that is the Control
+
+# make sure row names match gene names
+rownames(all_pvalues) <- rownames(expr_data)
+
+# Figure out what the column names should be
+disease_names <- levels(group_factors)
+
+# Exclude Control!
+disease_names <- disease_names[disease_names != "Control"]
+# assign them
+colnames(all_pvalues) <- disease_names
+# now look
+head(all_pvalues)
+```
+**3. Adjust the p-values using the FDR method.**
+```{r Q3}
+# Apply FDR adjustment column-wise
+all_pvalues_fdr <- apply(all_pvalues, 2, p.adjust, method = "fdr")
+
+#all_pvalues_fdr now contains FDR-adjusted p-values
+head(all_pvalues_fdr)
+```
+**4. Gene regulation: How many genes have an adjusted p-value < 0.05 in at least one skin disease?** 
+```{r Q4}
+# Check which p-values are < 0.05
+significant_matrix <- all_pvalues_fdr < 0.05
+head(significant_matrix) # just to compare and check
+
+# for each gene, check if there is any TRUE in any condition 
+genes_with_significant <- apply(significant_matrix, 1, any)
+head(genes_with_significant) # looks to be correct
+
+# count how many genes have at least one significant p-value
+num_significant_genes <- sum(genes_with_significant)
+
+print(num_significant_genes)
+
+```
+There are 1319 genes with an adjusted p-value < 0.05 in at least one skin disease
+

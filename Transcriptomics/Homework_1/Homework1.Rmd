@@ -1,0 +1,215 @@
+---
+title: "HW1"
+author: "Tiffany Tang"
+date: "2025-05-28"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1
+
+**1. What is an R object?**
+-  Objects are containers for pieces of data or lines of code. They can be data structures like vectors, matrices and data frames which are used for storing and manipulating information in R. 
+
+**2. How many ways can data be assigned to an R object?**
+- There are 3 ways that data can be assigned to an R object. The first is: ` obj <- definition`, The second is: ` obj = definition` and the third is ` assign("obj", definition)`.
+
+**3. Why do you think it is important to ensure that data objects are of the correct type?**
+Using the correct type ensures that the object's functions behave as expected. For example, if you are reading gene expression data where there is one column for gene names and the rest are expression levels, you want to make sure you read in the file into an object that can hold mixed data types, otherwise if you read it into a object that only takes numeric variables, the gene names will be lost
+
+**4. What is the relationship between vectors, matrices, and data frames?**
+- Vectors, matrices and data frames are all data structures in R. Vectors are the most basic data structure in R, it is one dimensional and hold elements of all the same type. Matrices are two dimensional and has both rows and columns. Like vectors, they must contain data all of the same type. Data frames are also two dimensional and have rows and columns like matrices, but unlike matrices they can hold different data types in each column. 
+
+**5. Why might a data frame be more suitable than a matrix for holding heterogeneous biological data?**
+- A data frame might be more suitable than a matrix for holding biological data because biological data may not all be of the same type. For example in gene expression data you may have a file in which the first column is gene name, some columns are expression levels, other columns tell you information about the sample type and etc. 
+
+## Part 2
+**1. Create a matrix with the values below (see howework PDF) with the value below. The experiments are column names and the genes are row names.**  
+```{r Q1}
+# First I am going to make vectors to for each gene 
+# and populate it with their values
+GeneA <- c(89, 78, 77, 56)
+GeneB <- c(90, 99, 85, 97)
+GeneC <- c(78, 94, 99, 87)
+GeneD <- c(81, 83, 80, 79)
+GeneE <- c(62, 51, 99, 88)
+
+# Next using rbind I will combine the vectors into a matrix
+transcriptome <- rbind(GeneA, GeneB, GeneC, GeneD, GeneE)
+
+# Set column names for the matrix
+colnames(transcriptome) <- c("Control", "Nitrogen", "Phosphate", "Potassium")
+                       
+transcriptome # Just to look
+                      
+```
+**2. Use R code to calculate the average expression for each gene across all experiments. Call the vector expression average. The vector should contain 5 values- one for each gene.  
+``` {r Q2}
+
+# Initialize empty vector with the number of rows in transcriptome
+expression_average <- numeric(nrow(transcriptome)) # Use numeric to make sure that it is of type numeric
+
+# Use for loop to loop over each row and find the average
+for (i in 1:nrow(transcriptome)){ 
+# Loop for as many rows as there are in transcriptome
+# For each row, find the mean of all the columns and put this number into the next index in the vector
+  expression_average[i] <- mean(transcriptome[i, ])
+}
+
+# Assign the gene names to the vector for organization
+names(expression_average) <- rownames(transcriptome)
+
+expression_average # Just to look
+```
+**3. Sort the matrix so that the gene with the highest average expression value is on top and save it into a new data frame (call it sorted_gene)**
+```{r Q3}
+# First I am going to sort expression average to see what order the genes should be in
+# using the order function built in R
+sorted_order <- order(expression_average, decreasing = TRUE)
+sorted_order # Just to see
+
+#This gives you the indexes of the vector in sorted order, so I just have to call on the matrix in this order and funnel it into a new data frame
+
+sorted_genes <- transcriptome[sorted_order, ]
+
+# change it to type data frame
+sorted_genes <- as.data.frame(sorted_genes)
+sorted_genes # just to view
+```
+
+## Part 3
+
+**We will use the data file “expvalues.txt”. Remember, the first line defines the different experiments and after that every row is a different gene and its expression (RNA transcript abundance) values. The first column is the gene name, followed by the different experiments. First three experiments are replicates of the “control” experiments and the last three are replicates for the “treatments”.**
+
+**a. Load the file expvalues.txt into R**
+```{r 3A}
+# Load in the file with the read table function
+# Header is true and row names are set to 1 since there are column names and row names
+expvalue <- read.table("expvalues.txt", header = TRUE, row.names =1)
+# this reads it in as a data frame
+
+head(expvalue) # just to double check
+```
+
+**b. The first three columns are “control” and the last three columns are “treatment” groups. Calculate the mean of the control samples and the mean of the treatment samples for each gene.(You can use a loop or apply functions)**
+
+```{r 3B}
+# I will be doing this with a loop
+# initialize a matrix to store your variables
+mean_expr <- matrix(nrow = nrow(expvalue), ncol = 2)
+colnames(mean_expr) <- c("control", "treatment") # set column names
+rownames(mean_expr) <- rownames(expvalue) # set row names
+
+# loop over each row
+for (i in 1:nrow(expvalue)){
+  # calculate mean for control and store it
+  mean_expr[i, "control"] <- mean(as.numeric(expvalue[i, 1:3]))
+  
+  # calculate mean for treatment and store it
+  mean_expr[i, "treatment"] <- mean(as.numeric(expvalue[i, 4:6]))
+  
+} # needed to convert to numeric or else the loop was throwing errors
+
+# convert to data frame
+mean_expr <- as.data.frame(mean_expr)
+
+head(mean_expr) # just to look
+```
+
+**c. Calculate the fold change for each gene**
+```{r 3C}
+# I will take each treatment index and divide it by each control index
+# then save it into fold change, a new column in step_c
+mean_expr$fold_change <- mean_expr[,"treatment"]/mean_expr[,"control"]
+
+#rename this new data frame
+step_c <- mean_expr
+
+head(step_c) # just to look
+```
+
+**d.  Take the log2 of the fold change. You have just calculated log fold change(LFC).**
+
+```{r 3D}
+# I am going to do the same as above, take log2 of the fold change column and add it to a new column
+
+step_c$log_2_fc <- log2(step_c$fold_change)
+
+step_d <- step_c # rename this new data frame
+
+head(step_d) # just to look 
+
+```
+
+**e. How many genes have a LFC > 1 OR < -1 ?**
+
+```{r 3E}
+# Count genes where log2 fold change > 1 or < -1 in the log_2_fc column
+# Sum will count the amount of true in this statement
+num_genes <- sum(step_d$log_2_fc > 1 | step_d$log_2_fc < -1)
+
+num_genes # look at the number
+
+```
+- the answer is 4244
+
+**f. Save the names of the genes that have a LFC > 1 into a file called “Induced_genes.txt”**
+
+```{r 3F}
+# look for genes in log_2_FC column that are greater than 1
+# Everytime this is true I want the rowname of it- this is the gene
+#save this into a variable
+induced_genes <- rownames(step_d)[step_d$log_2_fc > 1]
+head(induced_genes) # just to look
+
+#write and save to a text file
+write.table(induced_genes, file = "Induced_genes.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+# omit quotes around the gene names
+# omit the row and col names
+```
+**g. Using the same set of induced genes in the previous question, create a boxplot to show the distribution of values for each induced gene in each experiment. The x-axis should have all six experiments, and the y-axis is the expression level. Save the boxplot as a pdf file called “boxplot.pdf”**
+```{r 3G}
+# Create a boxplot of the induced genes
+# Induced genes gives you what rows to pull from the original expvalue
+# Pull the genes that you want into a new data frame with all the columns
+step_g <- expvalue[induced_genes,] 
+head(step_g)
+
+# Create the boxplot
+pdf("boxplot.pdf", width = 10, height = 8)  # Adjust width and height to give more space
+par(mar = c(14, 4, 4, 2) + 0.1) # Ad just bottom margin to fit x axis labels
+
+
+# Save to PDF
+boxplot(step_g,
+        main = "Expression Levels of Induced Genes", # main title
+        xlab = "Experiment", # X axis label
+        ylab = "Expression Level", # Y axis label
+        las = 2,              # Rotate x-axis labels for visibility
+        
+        # Need to hide the outliers since there were so many in the original you couldn't see the box
+        cex.axis = 0.8,
+        outline = FALSE      # Hide outliers so box is visible
+        )
+dev.off() # close device to prevent errors
+```
+
+Below is just for box plot visualization in the knitted file
+```{r Boxplot}
+# This is just my box plot code copied from above
+boxplot(step_g,
+        main = "Expression Levels of Induced Genes", # main title
+        xlab = "Experiment", # X axis label
+        ylab = "Expression Level", # Y axis label
+        las = 2,              # Rotate x-axis labels for visibility
+        
+        # Need to hide the outliers since there were so many in the original you couldn't see the box
+        cex.axis = 0.8,
+        outline = FALSE      # Hide outliers so box is visible
+        )
+```
