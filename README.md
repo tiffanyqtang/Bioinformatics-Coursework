@@ -13,6 +13,9 @@ Welcome to my **Bioinformatics Coursework** repository! This repository contains
   
 - **Problem Solving**   
   Logical reasoning, algorithmic thinking, and programming challenges.
+
+- **Transcriptomics**
+  RNA-seq and microarry analysis using R, including differential expression, clustering and pathway enrichment from real world transcriptome datasets. 
   
 - **Unix**   
   Shell scripting, file operations, and system administration tasks.
